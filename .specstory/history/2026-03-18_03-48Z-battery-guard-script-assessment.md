@@ -1045,7 +1045,896 @@ Let me create:
 Actually the user said "lets see how to make it run on startup" - they want to know how. I'll write clear instructions and optionally add a launcher script so they can choose Task Scheduler or Startup folder.
 
 I'll create:
-1. A launcher script (batch or VBS) that runs `pythonw.exe path\to\battery_guard_event.py` from the project directory. For venv they'd need to use venv\Scripts\pythonw.exe. So the launcher could be a .bat that does `"%~dp0venv\Scripts\pythonw.exe" "%~dp0battery_guard_event.py"` so when the batch is in Startup folder, we need to use the project path. If we put the batch in the project folder and add a shortcut to that batch in Startup, then %~dp0 is the project folder. So: `"%~dp0venv\Scripts\pythonw.exe" "%~dp0battery_guard_event.</details></think>
+1. A launcher script (batch or VBS) that runs `pythonw.exe path\to\battery_guard_event.py` from the project directory. For venv they'd need to use venv\Scripts\pythonw.exe. So the launcher could be a .bat that does `"%~dp0venv\Scripts\pythonw.exe" "%~dp0battery_guard_event.py"` so when the batch is in Startup folder, we need to use the project path. If we put the batch in the project folder and add a shortcut to that batch in Startup, then %~dp0 is the project folder. So: `"%~dp0venv\Scripts\pythonw.exe" "%~dp0battery_guard_event.py"` and run the batch from project folder. When Windows runs the shortcut from Startup, the "Start in" might be the Startup folder - so %~dp0 would be Startup folder, not the project folder. So we need the shortcut to have "Target" = path to batch and "Start in" = project folder. Then in the batch we can use %~dp0 which is the directory of the batch file. So if the batch lives in the project folder, and we create a shortcut to it in Startup, when we run the shortcut, does %~dp0 expand to the batch's directory? Yes - %~dp0 is the drive and path of the batch file (the script being executed). So if the shortcut runs "C:\GitHub-Repos\Waqad\battery-percentage-utility\run_battery_guard_event.bat", then %~dp0 = C:\GitHub-Repos\Waqad\battery-percentage-utility\. So we're good. Launcher batch: 
+@echo off
+"%~dp0venv\Scripts\pythonw.exe" "%~dp0battery_guard_event.py"
+But if they don't use a venv, they might have pythonw in PATH. So we could do:
+"%~dp0venv\Scripts\pythonw.exe" "%~dp0battery_guard_event.py"
+and if venv doesn't exist, fall back to pythonw. Or just document both cases. I'll make the batch use venv if present else pythonw from PATH.
+</details></think>
+
+---
+
+
+Adding startup options: creating a launcher script and concise instructions for Task Scheduler and the Startup folder.
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: C:\GitHub-Repos\Waqad\battery-percentage-utility\battery_guard_event.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="generic" data-tool-name="glob_file_search">
+<details>
+<summary>Tool use: **glob_file_search** • Searched codebase "undefined" • **7** results in **1** directory</summary>
+
+Directory: **C:\GitHub-Repos\Waqad\battery-percentage-utility** (7 files)
+
+| File |
+|------|
+| `../.\venv\Lib\site-packages\pip\_vendor\README.rst` |
+| `../.\venv\Lib\site-packages\win32com\test\readme.txt` |
+| `../.\venv\Lib\site-packages\win32com\readme.html` |
+| `../.\venv\Lib\site-packages\isapi\test\README.txt` |
+| `../.\venv\Lib\site-packages\isapi\samples\README.txt` |
+| `../.\venv\Lib\site-packages\isapi\README.txt` |
+| `../.\venv\Lib\site-packages\adodbapi\readme.txt` |
+
+</details>
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+No README in the project root. I'll create:
+1. A batch launcher that uses pythonw (no console window), preferring venv\Scripts\pythonw.exe if it exists.
+2. A short RUN_ON_STARTUP.md (or add a section to a new README) with Task Scheduler and Startup folder steps.
+
+Log file path: the script uses a relative path "battery_guard_event.log". When run from Task Scheduler or Startup, the working directory might be different. So when we run on startup we should either (1) set "Start in" to the script directory so the log is written there, or (2) change the script to use an absolute path for the log (e.g. in user's appdata or next to the script). For simplicity I'll document that Task Scheduler / shortcut should set "Start in" to the project folder so the log and any relative paths work. And in the launcher batch we don't need to cd because we're passing full path to the script; but the script's working directory when run will be whatever Windows set (e.g. System32 for Task Scheduler if not set). So we should run the batch with "Start in" = project directory, and in the batch we could `cd /d "%~dp0"` before running pythonw so the current directory is the project folder. That way battery_guard_event.log is created in the project folder.
+</details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\run_battery_guard_event.bat</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+Done. I've added:
+1. run_battery_guard_event.bat - changes to project dir, then runs venv\Scripts\pythonw.exe if present else pythonw, with the script path. So the working directory is the project folder and the log file will be created there.
+2. RUN_ON_STARTUP.md - clear instructions for Task Scheduler and Startup folder, plus how to stop and where logs are.
+
+I'll give the user a short summary.
+</details></think>
+
+---
+
+
+Here’s what’s in place:
+
+### 1. **`run_battery_guard_event.bat`**
+- Switches to the project folder so `battery_guard_event.log` is created there.
+- Uses `venv\Scripts\pythonw.exe` if the venv exists, otherwise `pythonw` from PATH.
+- Runs with **no console window** (`pythonw`).
+
+### 2. **`RUN_ON_STARTUP.md`**
+Instructions for two ways to run at login:
+
+| Method | Use case |
+|--------|----------|
+| **Task Scheduler** | More control (run at logon, optional conditions, easy to enable/disable). |
+| **Startup folder** | Easiest: shortcut in `shell:startup` that runs the batch. |
+
+Both methods run the batch with **Start in** = your project folder so the log stays in the repo.
+
+**Quick Startup-folder setup**
+1. Press `Win + R` → type `shell:startup` → Enter.
+2. New shortcut → Target:  
+   `C:\GitHub-Repos\Waqad\battery-percentage-utility\run_battery_guard_event.bat`  
+   Start in:  
+   `C:\GitHub-Repos\Waqad\battery-percentage-utility`
+3. Name it e.g. “Battery Guard”.
+
+After the next logon, the event-driven guard will run in the background with no window. To stop it, end the `pythonw.exe` process in Task Manager (or disable the task if you used Task Scheduler).
+
+---
+
+_**User**_
+
+btw, this event drivern one is better in performance in resource usage?
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+
+The user is asking whether the event-driven version (battery_guard_event.py) is better in terms of performance and resource usage compared to the polling version (battery_guard.py).
+
+Let me think through this:
+
+**Polling version (battery_guard.py):**
+- Runs a loop that wakes up every 60 seconds (CHECK_INTERVAL_SECONDS = 60)
+- Each wake: get_battery_info() (psutil.sensors_battery()), then threshold logic, then time.sleep(60)
+- So: 1 wake per minute, minimal CPU (a few ms of work), but the process is always "alive" and will wake the CPU every 60s from sleep/timer
+
+**Event-driven version (battery_guard_event.py):**
+- No periodic timer. It blocks in the Windows message loop (GetMessageW), which is a proper wait that doesn't poll
+- Only runs logic when Windows sends WM_POWERBROADCAST (battery % or AC/DC change)
+- So: zero CPU and no wakeups when nothing changes; only runs when power state actually changes
+
+So yes, the event-driven one is better for:
+1. **CPU**: Effectively zero when idle (no 60s timer callbacks)
+2. **Wakeups**: Doesn't wake the system every 60s (matters on laptops for power/battery life)
+3. **Responsiveness**: Reacts immediately on plug/unplug or percentage change, instead of up to 60s delay
+
+I'll give a short, clear answer.
+</details></think>
+
+---
+
+
+Yes. The event-driven version is better for performance and resource use.
+
+| Aspect | Polling (`battery_guard.py`) | Event-driven (`battery_guard_event.py`) |
+|--------|-----------------------------|----------------------------------------|
+| **CPU when idle** | Wakes every 60s, does a quick check, then sleeps | Blocks in the Windows message loop; no work until an event |
+| **Timer wakeups** | One wake every 60 seconds (timer + `sleep`) | No periodic timer; only wakes when Windows sends a power message |
+| **Battery impact** | Small but repeated wakeups can add up on a laptop | No periodic wakeups, so better for battery |
+| **When it runs** | Every 60s regardless of changes | Only when battery % or plug state actually changes |
+
+So: the event-driven script uses less CPU and causes fewer wakeups, and it only runs when something changes instead of every minute. For a background guard, the event-driven approach is the better choice for performance and resource usage.
+
+---
+
+_**User**_
+
+and what if I want to put this in a different folder? which files and how what will have to be changed?
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+
+The user wants to know what they need to change if they move the battery-percentage-utility project to a different folder. I need to identify:
+
+1. **Files that contain hardcoded paths** - These would need to be updated when moving.
+2. **Files that use relative paths** - These should work as-is as long as they're run from the project folder (or with the right "Start in" directory).
+3. **Documentation** that references the current path - RUN_ON_STARTUP.md and possibly the batch file.
+
+Let me think through each file:
+
+1. **battery_guard.py** - Uses relative paths: "battery_guard.log". No hardcoded folder path. If you run from the new folder, log goes there. Good.
+
+2. **battery_guard_event.py** - Uses relative path: "battery_guard_event.log" in setup_logging(). No hardcoded folder. Same as above.
+
+3. **run_battery_guard_event.bat** - Uses `%~dp0` which is the directory where the batch file lives. So when you move the whole project folder, the batch file moves with it, and %~dp0 will be the new location. So the batch file has NO hardcoded path - it's fully portable. You don't need to change it.
+
+4. **RUN_ON_STARTUP.md** - Contains example paths:
+   - `C:\GitHub-Repos\Waqad\battery-percentage-utility\run_battery_guard_event.bat`
+   - `C:\GitHub-Repos\Waqad\battery-percentage-utility`
+   These are just examples. The doc says "use your project path" or similar - let me check. I'll need to update the doc to say "replace with your actual project folder" or make the paths generic so the user knows what to substitute.
+
+5. **Task Scheduler / Startup shortcut** - If they already set up Task Scheduler or a Startup shortcut, those contain the OLD path. So when they move the folder:
+   - Task Scheduler: they need to edit the task and update "Program/script" and "Start in" to the new folder.
+   - Startup shortcut: they need to edit the shortcut's Target and "Start in" to the new folder.
+   Or they can delete and recreate the task/shortcut.
+
+So what actually needs to change when moving:
+- **No code changes** - battery_guard.py, battery_guard_event.py, run_battery_guard_event.bat use relative paths or %~dp0. Moving the folder is enough.
+- **RUN_ON_STARTUP.md** - Should be updated to use a placeholder like `C:\path\to\battery-percentage-utility` or explicit "replace with your folder" so when they move they know to use the new path in Task Scheduler / shortcut.
+- **User's existing Task Scheduler task or Startup shortcut** - User must update the path to point to the new folder (or recreate it).
+
+I'll write a short summary and optionally update RUN_ON_STARTUP.md to make the path a clear placeholder and add a "Moving the project" section.
+</details></think>
+
+---
+
+
+Checking which paths are used and updating the docs so moving the folder is clear.
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: C:\GitHub-Repos\Waqad\battery-percentage-utility\run_battery_guard_event.bat</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="unknown" data-tool-name="ripgrep_raw_search">
+<details>
+<summary>Tool use: **ripgrep_raw_search**</summary>
+
+
+Parameters:
+
+```json
+{
+  "pattern": "C:\\\\\\\\|/home/|battery-percentage-utility|GitHub-Repos|Waqad",
+  "path": "C:\\GitHub-Repos\\Waqad\\battery-percentage-utility",
+  "glob": "*.py",
+  "caseInsensitive": false
+}
+```
+Additional data:
+
+```json
+{
+  "isPruned": true,
+  "pattern": "C:\\\\\\\\|/home/|battery-percentage-utility|GitHub-Repos|Waqad",
+  "path": "C:\\GitHub-Repos\\Waqad\\battery-percentage-utility",
+  "outputMode": "content",
+  "totalFiles": 0,
+  "totalMatches": 0,
+  "topFiles": []
+}
+```
+Status: **completed**
+
+
+</details>
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+Good. The Python files have no hardcoded paths. The batch uses %~dp0 (directory of the batch file), so it's portable. Only RUN_ON_STARTUP.md has the example path. I'll:
+1. Update RUN_ON_STARTUP.md to use a generic placeholder path and add a "Moving the project" section.
+2. Summarize for the user which files need changes (none in the repo when moving; only external Task Scheduler / shortcut need updating).
+</details></think>
+
+---
+
+
+Checking Python scripts for log paths:
+
+
+---
+
+<tool-use data-tool-type="unknown" data-tool-name="ripgrep_raw_search">
+<details>
+<summary>Tool use: **ripgrep_raw_search**</summary>
+
+
+Parameters:
+
+```json
+{
+  "pattern": "\\.log|log_file|FileHandler|RotatingFileHandler",
+  "path": "C:\\GitHub-Repos\\Waqad\\battery-percentage-utility",
+  "glob": "*.py",
+  "caseInsensitive": false
+}
+```
+Additional data:
+
+```json
+{
+  "isPruned": true,
+  "pattern": "\\.log|log_file|FileHandler|RotatingFileHandler",
+  "path": "C:\\GitHub-Repos\\Waqad\\battery-percentage-utility",
+  "outputMode": "content",
+  "totalFiles": 2,
+  "totalMatches": 7,
+  "topFiles": [
+    {
+      "uri": ".\\battery_guard_event.py",
+      "matchCount": 4
+    },
+    {
+      "uri": ".\\battery_guard.py",
+      "matchCount": 3
+    }
+  ]
+}
+```
+Status: **completed**
+
+
+</details>
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+Both scripts use relative log file names ("battery_guard.log", "battery_guard_event.log"). So as long as the working directory is the project folder when you run the script, the logs are created in the project folder. The batch file does `cd /d "%~dp0"` so when you run the batch, the current directory is the project folder - and when the batch launches pythonw, that process inherits the current directory. So when you move the project, the batch still works (%~dp0 is the batch's directory), and the logs end up in the new project folder. No code changes needed.
+
+I'll update RUN_ON_STARTUP.md to:
+1. Use a placeholder like `<your-project-folder>` or `C:\path\to\battery-percentage-utility` in the paths.
+2. Add a "Moving the project" section that says: move the whole folder; no file edits needed; if you already have a Task Scheduler task or Startup shortcut, update its path to the new folder.
+</details></think>
+
+---
+
+
+Updating the doc to use a generic path and adding a "Moving the project" section.
+
+
+---
+
+The string to replace was not found in the file.
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+The file might have different quote characters (curly vs straight). Let me do smaller replacements.
+</details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+Good, all replacements worked. Let me give the user a clear summary.
+</details></think>
+
+---
+
+
+Summary of what matters when you **move the project to a different folder**:
+
+---
+
+### No changes needed inside the project
+
+| File | Why it still works |
+|------|--------------------|
+| **battery_guard.py** | Uses relative log path `battery_guard.log`. |
+| **battery_guard_event.py** | Uses relative log path `battery_guard_event.log`. |
+| **run_battery_guard_event.bat** | Uses `%~dp0` (folder where the batch file is), so it always points to the script and venv in the same folder. |
+| **requirements.txt** | No paths. |
+
+So you can move the whole folder (e.g. to `D:\Tools\battery-guard`) and **you don’t need to edit any of these files**.
+
+---
+
+### What you do need to change (only if you already set up startup)
+
+- **Task Scheduler**  
+  Edit the task → **Actions** → set **Program/script** and **Start in** to the **new** project folder (e.g. `D:\Tools\battery-guard\run_battery_guard_event.bat` and `D:\Tools\battery-guard`).
+
+- **Startup shortcut**  
+  Right‑click shortcut → **Properties** → set **Target** and **Start in** to the **new** project folder.
+
+If you haven’t created the task or shortcut yet, just use the new folder path when you create them.
+
+---
+
+### Doc update
+
+`RUN_ON_STARTUP.md` is updated to use a generic `<project-folder>` and includes a short **“Moving the project to a different folder”** section so this is documented for later.
+
+---
+
+_**User**_
+
+shouldn't wwe have an exe file or something so that we don't have to copy the whole folder? to make it completely modular?
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Explaining packaging options**
+
+I need to provide a clear explanation of packaging options. I should mention PyInstaller, pointing out that while the folder is still needed for assets, the .exe file is portable. I’ll compare the single executable versus the directory option, noting that a virtual environment isn't required for this process. It’s important to outline the steps clearly so users can easily understand how to package their applications effectively.</details></think>
+
+---
+
+### Short answer
+
+You don’t *have* to copy the whole folder; you can absolutely make this into a standalone `.exe` and move just that (plus maybe a small config/log directory if you want).
+
+### Recommended: PyInstaller single‑file or single‑folder exe
+
+- **Tool**: `pyinstaller`
+- **What it does**: bundles Python + your code + dependencies (`psutil`, `winotify`, ctypes stuff) into a Windows executable.
+
+Two main modes:
+
+- **One-folder build** (more reliable, easier to debug):
+  ```bash
+  pyinstaller --noconsole --name battery_guard_event battery_guard_event.py
+  ```
+  - Output: `dist\battery_guard_event\battery_guard_event.exe` plus its support files.
+  - You can copy just that **dist folder** anywhere and run the `.exe`.
+
+- **One-file build** (fully self-contained single `.exe`):
+  ```bash
+  pyinstaller --noconsole --onefile --name battery_guard_event battery_guard_event.py
+  ```
+  - Output: single `battery_guard_event.exe`.
+  - You can drop that *one* file in any folder (e.g. `D:\Tools`) and:
+    - Point Task Scheduler / Startup shortcut directly to it.
+    - It will create logs in its working directory (or wherever you configure).
+
+For a “completely modular” setup:
+
+- Treat the built `.exe` as the **installable artifact**.
+- Keep the repo for development.
+- When you update the script, re-run PyInstaller to produce a new `.exe`, then copy just that `.exe` (or its `dist` folder) to any machine/folder and update your Task Scheduler / shortcut to point to it.
+
+If you want, I can add a minimal `BUILD.md` with exact PyInstaller commands and a tiny wrapper batch that launches the built `.exe`.
+
+---
+
+_**User**_
+
+sure
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+
+The user said "sure" to my offer to add a minimal BUILD.md with exact PyInstaller commands and a tiny batch wrapper that launches the built .exe. I'll:
+
+1. Create BUILD.md with:
+   - PyInstaller install (pip install pyinstaller)
+   - One-folder build command (recommended)
+   - One-file build command
+   - Where output goes, how to run, how to use with Task Scheduler / Startup
+   - Note about log file location (working dir when exe runs)
+
+2. Optionally a small batch that launches the exe - but if they use one-file exe, they just point Task Scheduler at the exe directly. A batch could set "Start in" to a fixed folder for logs. I'll mention in BUILD.md that for one-file exe, Task Scheduler "Start in" should be set to where you want the log (e.g. a folder you create), and the batch could do that. I'll add a simple run_battery_guard_event_exe.bat that takes no arguments and assumes it's next to the exe, or we could put the exe path in the batch. Actually the cleanest is:
+   - BUILD.md explains both builds and says: for one-file, put the exe wherever you want, set Task Scheduler to run that exe with "Start in" = same folder (or a dedicated folder like C:\BatteryGuardLogs) so the log goes there.
+   - A wrapper batch could be: `@echo off & cd /d "%~dp0" & "%~dp0battery_guard_event.exe"` so when you use one-folder build, you run the batch and it runs the exe from the dist folder. For one-file exe, the batch would be next to the single exe. So the batch is generic: run the exe in the same directory as the batch. That way "Start in" is the folder containing the batch and exe. I'll create a batch that's meant to be placed next to the built exe (either in the one-folder output or next to the one-file exe). So after building, user can run either the exe or the batch. The batch ensures "Start in" is the script's directory when launched from shortcut/Task Scheduler. Actually when Task Scheduler runs an exe with "Start in" set, the exe's working directory is already that folder. So the batch is optional - mainly useful if someone double-clicks or runs from a shortcut that doesn't set "Start in". I'll add a simple batch in the repo that we document: "Copy this batch next to your built exe and use it as the target if you want to ensure working directory is set."
+
+Let me create BUILD.md and a small batch file that's intended to sit beside the built exe.
+</details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\BUILD.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\run_battery_guard_event_exe.bat</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+I should add pyinstaller to requirements or a separate requirements-build.txt. The user might want to build occasionally; keeping it in a dev/build requirements is common. I'll add a note in BUILD.md that pyinstaller can be installed once and doesn't need to be in the main requirements.txt, or we could add requirements-build.txt with pyinstaller. Let me add a line in BUILD.md: "You can add pyinstaller to a separate requirements-build.txt if you want to track it." And optionally create requirements-build.txt with pyinstaller. I'll create requirements-build.txt so they can do `pip install -r requirements-build.txt` when they want to build.
+</details></think>
+
+---
+
+
+Adding a build-time dependency file so we can install PyInstaller with `pip install -r requirements-build.txt`.
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\requirements-build.txt</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\BUILD.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+Done. I've added BUILD.md with one-folder and one-file PyInstaller instructions, run_battery_guard_event_exe.bat for optional use next to the built exe, and requirements-build.txt. I'll give a short summary to the user.
+</details></think>
+
+---
+
+
+Here’s what’s in place:
+
+### 1. **BUILD.md**
+- Install build deps: `pip install -r requirements-build.txt` (or `pip install pyinstaller`).
+- **One-folder build** (recommended): `pyinstaller --noconsole --name battery_guard_event battery_guard_event.py` → `dist\battery_guard_event\` with the exe inside; copy that folder anywhere.
+- **One-file build**: `pyinstaller --noconsole --onefile --name battery_guard_event battery_guard_event.py` → single `dist\battery_guard_event.exe`.
+- How to use the exe with Task Scheduler / Startup (point at the exe, set “Start in” so logs go where you want).
+- Optional batch wrapper for when you don’t set “Start in”.
+
+### 2. **run_battery_guard_event_exe.bat**
+- Intended to sit **next to** the built `battery_guard_event.exe`.
+- Sets working directory to that folder and runs the exe so the log is created there. Use this as the Task Scheduler / Startup target if you prefer not to set “Start in” manually.
+
+### 3. **requirements-build.txt**
+- Contains `pyinstaller>=6.0` for `pip install -r requirements-build.txt` when you want to build.
+
+Quick test from the project folder (with venv active):
+
+```powershell
+pip install -r requirements-build.txt
+pyinstaller --noconsole --name battery_guard_event battery_guard_event.py
+```
+
+Then run `dist\battery_guard_event\battery_guard_event.exe` (or copy that folder elsewhere and run the exe).
+
+---
+
+_**User**_
+
+and how does the task scheduler option in @RUN_ON_STARTUP.md changes with this exe?
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+
+The user wants to know how the Task Scheduler instructions in RUN_ON_STARTUP.md change when using the built .exe instead of the batch + Python script. I should update RUN_ON_STARTUP.md to include a section (or clarify) that when using the exe, you point Task Scheduler at the exe directly and set "Start in" to the folder containing the exe (or where you want logs). I'll read the current RUN_ON_STARTUP.md and add an "Option 3" or a subsection for "Using the built .exe" so both flows are documented in one place.
+</details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+I'll add a clear section for "Using the built .exe" that explains how Task Scheduler and Startup folder change when you use the exe instead of the batch + Python. I'll keep the existing Option 1 and 2 as "Python + batch" and add Option 3 (or a subsection) for the exe, so both are in one place. Actually it might be cleaner to restructure slightly:
+- Intro: two ways to run at startup (Task Scheduler, Startup folder); two ways to run the guard (Python+batch, or built exe).
+- Option 1: Task Scheduler — with Python+batch, with exe
+- Option 2: Startup folder — with Python+batch, with exe
+
+Or:
+- Option 1: Task Scheduler (Python + batch)
+- Option 2: Task Scheduler (built .exe)
+- Option 3: Startup folder (Python + batch)
+- Option 4: Startup folder (built .exe)
+
+That gets long. Better: keep Option 1 and 2 as-is, add a new section "Using the built .exe instead" that says:
+- If you built the .exe (see BUILD.md), use the same triggers (Task Scheduler or Startup) but:
+  - Program/script (or shortcut Target): path to `battery_guard_event.exe` (e.g. one-file: `C:\Tools\battery_guard_event.exe`, or one-folder: `C:\Tools\battery_guard_event\battery_guard_event.exe`).
+  - Start in: the folder that contains the exe (so the log is written there).
+- Optional: you can use `run_battery_guard_event_exe.bat` next to the exe as the target instead, so "Start in" is automatic.
+
+I'll add this as a new section after Option 2.
+</details></think>
+
+---
+
+
+Adding a "Using the built .exe" section to RUN_ON_STARTUP.md that explains how Task Scheduler and Startup change.
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+I should also update "Stopping it" to mention that when using the exe you'll see battery_guard_event.exe in Task Manager instead of pythonw.exe. Let me add that.
+</details></think>
+
+---
+
+
+
+
+
+---
+
+The string to replace was not found in the file.
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+The quotes might be different (curly vs straight). Let me read the exact lines for Stopping it.
+</details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+The file has curly quotes "Battery Guard" and "End task". I'll use the exact characters.
+</details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+Also update the last line about logs - when using exe, logs are in the folder where the exe runs (Start in), not necessarily "project folder". I'll tweak that line to be generic.
+</details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+
+Good. Summary for the user.
+</details></think>
+
+---
+
+
+Summary of what changed in **RUN_ON_STARTUP.md**:
+
+### New section: **"Using the built .exe instead"**
+
+It clarifies how Task Scheduler and Startup work when you use the exe:
+
+- **Task Scheduler**
+  - **Program/script**: Path to `battery_guard_event.exe` (e.g. `C:\Tools\battery_guard_event.exe` for one-file, or `C:\Tools\battery_guard_event\battery_guard_event.exe` for one-folder).
+  - **Start in**: The folder that contains the exe (so `battery_guard_event.log` is created there).
+
+- **Startup shortcut**
+  - **Target**: Path to `battery_guard_event.exe`.
+  - **Start in**: Same folder as the exe.
+
+A short table compares “Python + batch” vs “built .exe” for both Program/script and Start in. It also mentions the optional `run_battery_guard_event_exe.bat` next to the exe if you want the batch to set the working directory.
+
+### Other edits
+
+- **Stopping it**: Task Manager can show `battery_guard_event.exe` when you use the exe (not only `pythonw.exe`).
+- **Logs**: Log location is described as “folder where the app runs” so it applies to both the project folder and the exe folder.
+
+---
+
+_**User**_
+
+@RUN_ON_STARTUP.md:51-52 what's this?
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+
+The user is asking about lines 51-52 in RUN_ON_STARTUP.md - they're pointing at the table rows for "Startup shortcut – Target" and "Startup shortcut – Start in". They might be confused about what "Startup shortcut" means or what the two columns represent. Let me explain clearly.
+</details></think>
+
+---
+
+
+That’s a **comparison table** in the “Using the built .exe instead” section. It’s saying:
+
+- **Row 1 – Startup shortcut → Target**  
+  - **Left column (Python + batch):** you set the shortcut’s “Target” to  
+    `<project-folder>\run_battery_guard_event.bat`  
+  - **Right column (built .exe):** you set the shortcut’s “Target” to the **path to `battery_guard_event.exe`** (e.g. `C:\Tools\battery_guard_event.exe`).
+
+- **Row 2 – Startup shortcut → Start in**  
+  - **Left column (Python + batch):** you set “Start in” to `<project-folder>`.  
+  - **Right column (built .exe):** you set “Start in” to **the folder that contains the exe** (so the log is written there).
+
+So:
+
+- **“Startup shortcut”** = the shortcut you put in the Startup folder (`shell:startup`) so the guard runs when you log in.
+- **“Target”** = the program the shortcut runs (either the `.bat` or the `.exe`).
+- **“Start in”** = the working directory when that program runs (project folder for the batch, exe folder for the exe).
+
+If you’d rather have a short sentence instead of the table for the exe case, we can replace those two rows with a single line like: “For the exe: set the shortcut Target to the exe path and Start in to the folder that contains the exe.”
+
+---
+
+_**User**_
+
+we need to do both? add a task in task scheduler and add a startup?
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+
+
+---
+
+
+
+---
+
+<tool-use data-tool-type="unknown" data-tool-name="read_file_v2">
+<details>
+<summary>Tool use: **read_file_v2**</summary>
+
+Status: **loading**
+
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: C:\GitHub-Repos\Waqad\battery-percentage-utility\RUN_ON_STARTUP.md</summary>
+
+Status: **loading**
+
+</details>
+
+</tool-use>
 
 ---
 

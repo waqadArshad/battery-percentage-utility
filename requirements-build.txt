@@ -1,0 +1,2 @@
+# Install when you want to build the .exe: pip install -r requirements-build.txt
+pyinstaller>=6.0
