@@ -27,7 +27,7 @@ pyinstaller --noconsole --name battery_guard_event battery_guard_event.py
 ```
 
 - **Output**: `dist\battery_guard_event\battery_guard_event.exe` (and other files in that folder).
-- **Run**: Double-click the exe or run it from a shortcut. Log file `battery_guard_event.log` is created in the **same folder as the exe** (or set “Start in” in Task Scheduler to that folder).
+- **Run**: Double-click the exe or run it from a shortcut. Log file `battery_guard_event.log` is created in the **same folder as the exe** (or set "Start in" in Task Scheduler to that folder).
 
 ### Option B: One-file (single .exe)
 
@@ -58,17 +58,17 @@ No batch file or Python/venv needed; point directly at the exe.
 
 ## 4. Optional: batch wrapper
 
-If you want a small launcher that always sets the working directory to the exe’s folder (e.g. for one-file exe when run from a shortcut that doesn’t set “Start in”),
+If you want a small launcher that always sets the working directory to the exe's folder (e.g. for one-file exe when run from a shortcut that doesn't set "Start in"),
 
 1. Copy `run_battery_guard_event_exe.bat` from the repo into the **same folder** as `battery_guard_event.exe`.
 2. Use the **batch** as the Task Scheduler / Startup target instead of the exe.
 
-The batch runs the exe and sets “Start in” to that folder so the log is created there.
+The batch runs the exe and sets "Start in" to that folder so the log is created there.
 
 ---
 
 ## Notes
 
-- **Antivirus**: One-file builds sometimes trigger warnings (unpacking to temp). One-folder build usually doesn’t.
+- **Antivirus**: One-file builds sometimes trigger warnings (unpacking to temp). One-folder build usually doesn't.
 - **Updates**: After changing `battery_guard_event.py`, run the same `pyinstaller` command again and replace the old exe (or folder) with the new build.
 - **Logs**: Rotating log, max ~4 MB, same as the Python script.
