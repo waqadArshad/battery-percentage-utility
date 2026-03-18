@@ -4,7 +4,7 @@ Use the **event-driven** script (`battery_guard_event.py`) so it runs in the bac
 
 **Pick one** of the two options below (Task Scheduler or Startup folder)—you don’t need both.
 
-Use **your actual project folder** wherever you see `<project-folder>` (e.g. `C:\GitHub-Repos\Waqad\battery-percentage-utility` or `D:\Tools\battery-guard`).
+Use **your actual project folder** wherever you see `<project-folder>` (e.g. `C:\Projects\battery-percentage-utility` or `D:\Tools\battery-guard`).
 
 ---
 

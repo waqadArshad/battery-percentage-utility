@@ -49,5 +49,5 @@ Desktop.ini
 .env.local
 *.local
 
-# Optional: SpecStory (uncomment to ignore)
-# .specstory/
+# SpecStory (contains user_id/email and local paths — keep private)
+.specstory/
