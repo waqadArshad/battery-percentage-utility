@@ -1,0 +1,45 @@
+2026-03-18 08:37:25,508 [INFO] Starting battery_guard with LOW_THRESHOLD=30%, HIGH_THRESHOLD=75%, CHECK_INTERVAL_SECONDS=60
+2026-03-18 08:37:25,509 [INFO] Battery status: 88%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 08:37:25,510 [INFO] High threshold reached (88%). Prompting to disconnect charger.
+2026-03-18 08:37:45,274 [INFO] battery_guard interrupted by user (KeyboardInterrupt). Exiting.
+2026-03-18 08:37:51,937 [INFO] Starting battery_guard with LOW_THRESHOLD=30%, HIGH_THRESHOLD=90%, CHECK_INTERVAL_SECONDS=60
+2026-03-18 08:37:51,938 [INFO] Battery status: 89%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 08:38:51,939 [INFO] Battery status: 90%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 08:38:51,940 [INFO] High threshold reached (90%). Prompting to disconnect charger.
+2026-03-18 08:39:51,941 [INFO] Battery status: 91%, plugged=False, low_notified=False, high_notified=True
+2026-03-18 08:39:53,959 [INFO] battery_guard interrupted by user (KeyboardInterrupt). Exiting.
+2026-03-18 08:54:17,987 [INFO] Starting battery_guard with LOW_THRESHOLD=30%, HIGH_THRESHOLD=90%, CHECK_INTERVAL_SECONDS=60
+2026-03-18 08:54:17,988 [INFO] battery_guard main loop starting.
+2026-03-18 08:54:17,989 [INFO] Battery status: 69%, plugged=False, low_notified=False, high_notified=False
+2026-03-18 08:54:31,910 [INFO] battery_guard interrupted by user (KeyboardInterrupt). Exiting.
+2026-03-18 08:54:38,752 [INFO] Starting battery_guard with LOW_THRESHOLD=30%, HIGH_THRESHOLD=72%, CHECK_INTERVAL_SECONDS=60
+2026-03-18 08:54:38,753 [INFO] battery_guard main loop starting.
+2026-03-18 08:54:38,753 [INFO] Battery status: 68%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 08:55:38,754 [INFO] Battery status: 70%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 08:56:38,755 [INFO] Battery status: 71%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 08:57:38,757 [INFO] Battery status: 73%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 08:57:38,758 [INFO] High threshold reached (73%). Prompting to disconnect charger.
+2026-03-18 08:58:38,803 [INFO] Battery status: 75%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 08:59:38,808 [INFO] Battery status: 76%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:00:38,816 [INFO] Battery status: 78%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:01:38,833 [INFO] Battery status: 80%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:02:38,835 [INFO] Battery status: 80%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:03:38,836 [INFO] Battery status: 83%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:04:38,837 [INFO] Battery status: 84%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:05:38,839 [INFO] Battery status: 86%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:06:38,840 [INFO] Battery status: 87%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:07:38,841 [INFO] Battery status: 88%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:08:38,842 [INFO] Battery status: 89%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:09:38,845 [INFO] Battery status: 90%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:10:38,846 [INFO] Battery status: 91%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:11:38,848 [INFO] Battery status: 92%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:12:38,849 [INFO] Battery status: 93%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:13:38,850 [INFO] Battery status: 94%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:14:38,861 [INFO] Battery status: 95%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:15:38,863 [INFO] Battery status: 95%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:16:38,864 [INFO] Battery status: 96%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:17:38,868 [INFO] Battery status: 96%, plugged=False, low_notified=False, high_notified=True
+2026-03-18 09:18:38,883 [INFO] Battery status: 95%, plugged=False, low_notified=False, high_notified=True
+2026-03-18 09:19:38,885 [INFO] Battery status: 94%, plugged=False, low_notified=False, high_notified=True
+2026-03-18 09:20:38,885 [INFO] Battery status: 92%, plugged=False, low_notified=False, high_notified=True
+2026-03-18 09:21:06,645 [INFO] battery_guard interrupted by user (KeyboardInterrupt). Exiting.

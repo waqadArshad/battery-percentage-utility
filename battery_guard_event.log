@@ -1,0 +1,19 @@
+2026-03-18 09:33:09,882 [INFO] Starting battery_guard_event (event-driven) LOW_THRESHOLD=30%, HIGH_THRESHOLD=90%, MIN_NOTIFICATION_GAP_SECONDS=300
+2026-03-18 09:33:09,888 [INFO] Battery status: 73%, plugged=False, low_notified=False, high_notified=False
+2026-03-18 09:34:12,900 [INFO] battery_guard_event exiting.
+2026-03-18 09:34:23,882 [INFO] Starting battery_guard_event (event-driven) LOW_THRESHOLD=30%, HIGH_THRESHOLD=75%, MIN_NOTIFICATION_GAP_SECONDS=300
+2026-03-18 09:34:23,887 [INFO] Battery status: 71%, plugged=False, low_notified=False, high_notified=False
+2026-03-18 09:34:23,888 [INFO] Battery status: 71%, plugged=False, low_notified=False, high_notified=False
+2026-03-18 09:34:23,888 [INFO] Battery status: 71%, plugged=False, low_notified=False, high_notified=False
+2026-03-18 09:34:23,890 [INFO] Battery status: 70%, plugged=False, low_notified=False, high_notified=False
+2026-03-18 09:34:40,399 [INFO] Battery status: 70%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 09:35:18,529 [INFO] Battery status: 71%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 09:36:27,258 [INFO] Battery status: 73%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 09:37:38,507 [INFO] Battery status: 75%, plugged=True, low_notified=False, high_notified=False
+2026-03-18 09:37:38,507 [INFO] High threshold reached (75%). Prompting to disconnect charger.
+2026-03-18 09:38:12,871 [INFO] Battery status: 76%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:38:47,742 [INFO] Battery status: 77%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:39:25,141 [INFO] Battery status: 78%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:40:00,032 [INFO] Battery status: 79%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:40:37,398 [INFO] Battery status: 80%, plugged=True, low_notified=False, high_notified=True
+2026-03-18 09:41:33,529 [INFO] battery_guard_event exiting.
